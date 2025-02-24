@@ -1,3 +1,11 @@
 # rename to .env
 BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
 PRIVATE_KEY=
+# DP
+UPGRADE_ADDRESS_1=0x
+# RC
+UPGRADE_ADDRESS_2=0x
+# DD
+UPGRADE_ADDRESS_3=0x
+###
+PROXY_ADDRESS=0x
