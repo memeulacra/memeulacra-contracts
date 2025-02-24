@@ -27,6 +27,10 @@ contract MsimToken is ERC20, ERC20Burnable, Ownable {
         _mint(to, amount);
     }
 
+    function contractTokenBalance() external view returns (uint256) {
+        return balanceOf(address(this));
+    }
+
     function updatePaymentAmount(uint256 _newAmount) external onlyOwner {
         paymentAmount = _newAmount;
         emit MinPaymentAmountUpdated(_newAmount);
