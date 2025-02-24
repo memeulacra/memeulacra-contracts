@@ -1,0 +1,3 @@
+# rename to .env
+BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
+PRIVATE_KEY=
