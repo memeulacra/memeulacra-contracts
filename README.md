@@ -15,6 +15,7 @@ npx hardhat ignition deploy ./ignition/modules/Lock.ts
 ```shell
 npx hardhat compile
 npx hardhat run scripts/msimtokendeploy.js --network baseSepolia
+npx hardhat run scripts/msimtokenupgrade.js --network baseSepolia
 npx hardhat run scripts/msimverify.js --network baseSepolia
 
 ```

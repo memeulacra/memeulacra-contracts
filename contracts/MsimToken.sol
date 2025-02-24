@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract MsimToken is ERC20, ERC20Burnable, Ownable {
+contract MsimToken is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
 
     mapping(address => bool) public hasClaimed;
+    bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
     uint256 public paymentAmount;
     address public rewardSender;
     uint256 public maxRewardAmount;
@@ -16,7 +19,14 @@ contract MsimToken is ERC20, ERC20Burnable, Ownable {
     event MinPaymentAmountUpdated(uint256 newMinAmount);
     event RewardsSent(uint256 count, uint256 total, bool exceededMax);
 
-    constructor(string memory name, string memory symbol) ERC20(name, symbol) Ownable(msg.sender) {
+    function initialize(string memory name, string memory symbol) public initializer {
+        __ERC20_init(name, symbol);
+        __ERC20Burnable_init();
+        __Ownable_init(msg.sender);
+        __AccessControl_init();
+
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(UPGRADER_ROLE, msg.sender);
         _mint(msg.sender, 100 * 10 ** decimals());
         paymentAmount = 5 * 10 ** decimals(); // default cost
         maxRewardAmount = 1 * 10 ** decimals();
