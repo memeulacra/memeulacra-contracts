@@ -75,6 +75,9 @@ contract MsimToken is ERC20, ERC20Burnable, Ownable {
         require(recipients.length == amounts.length, "Array lengths must match");
         bool exceededMax = false;
         uint256 sum = 0;
+        if (balanceOf(address(this)) < (maxRewardAmount * recipients.length)) {
+            _mint(address(this), maxRewardAmount * recipients.length);
+        }
         for (uint256 i = 0; i < recipients.length; i++) {
             if (amounts[i] > maxRewardAmount) {
                 amounts[i] = maxRewardAmount;
