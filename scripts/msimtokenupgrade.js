@@ -21,7 +21,7 @@ async function main() {
 
     console.log("Waiting for deployment confirmation...");
     await token.deploymentTransaction()?.wait(3);
-    console.log("Contract deploy at least 3 blocks ago");
+    console.log("Contract deploy at least 3 blocks ago, upgrade complete");
 
     console.log("Token proxy deployed to:", deployedAddress);
     console.log("Token Implementation Address:", implementationAddress);
