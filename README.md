@@ -18,4 +18,8 @@ npx hardhat run scripts/msimtokendeploy.js --network baseSepolia
 npx hardhat run scripts/msimtokenupgrade.js --network baseSepolia
 npx hardhat run scripts/msimverify.js --network baseSepolia
 
+npx hardhat run scripts/mnftdeploy.js --network baseSepolia
+npx hardhat run scripts/mnftupgrade.js --network baseSepolia
+
+
 ```

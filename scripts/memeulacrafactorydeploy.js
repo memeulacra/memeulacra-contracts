@@ -8,33 +8,32 @@ async function main() {
     const [deployer] = await ethers.getSigners();
     console.log("Deploying contracts with the account:", deployer.address);
 
-    const Token = await ethers.getContractFactory("MsimToken");
-    //const token = await Token.deploy("Memeulacra", "MSIM");
-    const token = await upgrades.deployProxy(Token, ["Memeulacra", "MSIM"], { initializer: "initialize" } );
+    const Factory = await ethers.getContractFactory("MemeulacraFactory");
+    const factory = await upgrades.deployProxy(Factory, [], { initializer: "initialize" } );
 
-    await token.waitForDeployment();
+    await factory.waitForDeployment();
 
-    const deployedAddress = await token.getAddress();
+    const deployedAddress = await factory.getAddress();
     const implementationAddress = await upgrades.erc1967.getImplementationAddress(deployedAddress);
 
     console.log("Waiting for deployment confirmation...");
-    await token.deploymentTransaction()?.wait(3);
+    await factory.deploymentTransaction()?.wait(3);
     console.log("Contract deploy at least 3 blocks ago");
 
-    console.log("Token proxy deployed to:", deployedAddress);
-    console.log("Token Implementation Address:", implementationAddress);
+    console.log("factory proxy deployed to:", deployedAddress);
+    console.log("factory Implementation Address:", implementationAddress);
 
     console.log("Granting Roles");
     if (process.env.UPGRADE_ADDRESS_1) {
-        await token.grantRole(token.UPGRADER_ROLE(), process.env.UPGRADE_ADDRESS_1);
+        await factory.grantRole(factory.UPGRADER_ROLE(), process.env.UPGRADE_ADDRESS_1);
         console.log("UPGRADER_ROLE: 1 granted");
     }
     if (process.env.UPGRADE_ADDRESS_2) {
-        await token.grantRole(token.UPGRADER_ROLE(), process.env.UPGRADE_ADDRESS_2);
+        await factory.grantRole(factory.UPGRADER_ROLE(), process.env.UPGRADE_ADDRESS_2);
         console.log("UPGRADER_ROLE: 2 granted");
     }
     if (process.env.UPGRADE_ADDRESS_3) {
-        await token.grantRole(token.UPGRADER_ROLE(), process.env.UPGRADE_ADDRESS_3);
+        await factory.grantRole(factory.UPGRADER_ROLE(), process.env.UPGRADE_ADDRESS_3);
         console.log("UPGRADER_ROLE: 3 granted");
     }
 

@@ -8,9 +8,9 @@ async function main() {
     const [deployer] = await ethers.getSigners();
     console.log("Deploying contracts with the account:", deployer.address);
 
-    const TokenVNext = await ethers.getContractFactory("MsimToken");
+    const TokenVNext = await ethers.getContractFactory("MemeulacraFactory");
     //const token = await Token.deploy("Memeulacra", "MSIM");
-    const token = await upgrades.upgradeProxy(process.env.MSIM_PROXY_ADDRESS, TokenVNext);
+    const token = await upgrades.upgradeProxy(process.env.MFACTORY_PROXY_ADDRESS, TokenVNext);
 
     await token.waitForDeployment();
 
