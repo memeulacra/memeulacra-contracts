@@ -37,6 +37,10 @@ async function main() {
         await token.grantRole(token.UPGRADER_ROLE(), process.env.UPGRADE_ADDRESS_3);
         console.log("UPGRADER_ROLE: 3 granted");
     }
+    if (process.env.BOT_MINTING_ADDRESS) {
+        await token.grantRole(token.MINTER_ROLE(), process.env.BOT_MINTING_ADDRESS);
+        console.log("MINTER_ROLE: granted to BOT");
+    }
 
     console.log("Verifying contract on Basescan...");
     try {

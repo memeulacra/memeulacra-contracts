@@ -40,6 +40,7 @@ contract MemeToken is ERC20Burnable, Ownable {
 
 contract MemeulacraFactory is Initializable, OwnableUpgradeable, AccessControlUpgradeable {
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     event NewMemeTokenFactoryEvent(address indexed owner, address indexed nftAddress);
 
@@ -49,6 +50,7 @@ contract MemeulacraFactory is Initializable, OwnableUpgradeable, AccessControlUp
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, msg.sender);
     }
 
     function deployMemeToken(
@@ -58,6 +60,7 @@ contract MemeulacraFactory is Initializable, OwnableUpgradeable, AccessControlUp
         address[] memory contributors,
         uint256[] memory contributorProportions
     ) external {
+        require(hasRole(MINTER_ROLE, msg.sender) || hasRole(UPGRADER_ROLE, msg.sender), "Caller is not a minter");
         MemeToken newToken = new MemeToken(name, symbol, ownerAddress, contributors, contributorProportions);
         emit NewMemeTokenFactoryEvent(msg.sender, address(newToken));
     }

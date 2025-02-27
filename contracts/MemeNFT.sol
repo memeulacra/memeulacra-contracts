@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 
 contract MemeNFT is Initializable, ERC721BurnableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     uint256 public nextTokenId;
     mapping(uint256 => string) private _imageURLs;
     mapping(uint256 => bytes32) private _imageHashes;
@@ -19,9 +20,11 @@ contract MemeNFT is Initializable, ERC721BurnableUpgradeable, OwnableUpgradeable
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, msg.sender);
     }
 
-    function mint(address to, string memory imageURL, bytes32 imageHash) external onlyOwner {
+    function mint(address to, string memory imageURL, bytes32 imageHash) external {
+        require(hasRole(MINTER_ROLE, msg.sender) || hasRole(UPGRADER_ROLE, msg.sender), "Caller is not a minter");
         uint256 tokenId = nextTokenId;
         _safeMint(to, tokenId);
         _imageURLs[tokenId] = imageURL;
