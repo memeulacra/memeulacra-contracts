@@ -42,7 +42,7 @@ contract MemeulacraFactory is Initializable, OwnableUpgradeable, AccessControlUp
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    event NewMemeTokenFactoryEvent(address indexed owner, address indexed nftAddress);
+    event NewMemeTokenFactoryEvent(address indexed owner, address indexed newTokenAddress);
 
     function initialize() public initializer {
         __Ownable_init(msg.sender);
