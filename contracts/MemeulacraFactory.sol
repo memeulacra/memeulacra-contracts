@@ -16,8 +16,8 @@ contract MemeToken is ERC20Burnable, Ownable {
         address[] memory contributors,
         uint256[] memory contributorProportions
     ) ERC20(name, symbol) Ownable(msg.sender) {
-        uint256 supply = 100000040; // 100 million + 40
-        require(supply >= 1000, "MemeToken: initial supply cannot be < 1000");
+        uint256 supply = 100000040  * 10 ** decimals(); // 100 million + 40
+        require(supply >= (1000  * 10 ** decimals()), "MemeToken: initial supply cannot be < 1000.0");
         uint256 proportionSum = 0;
         for (uint256 i = 0; i < contributorProportions.length; i++) {
             proportionSum += contributorProportions[i];
