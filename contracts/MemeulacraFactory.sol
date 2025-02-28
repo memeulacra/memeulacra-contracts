@@ -59,9 +59,11 @@ contract MemeulacraFactory is Initializable, OwnableUpgradeable, AccessControlUp
         address ownerAddress,
         address[] memory contributors,
         uint256[] memory contributorProportions
-    ) external {
+    ) external returns (address) {
         require(hasRole(MINTER_ROLE, msg.sender) || hasRole(UPGRADER_ROLE, msg.sender), "Caller is not a minter");
         MemeToken newToken = new MemeToken(name, symbol, ownerAddress, contributors, contributorProportions);
-        emit NewMemeTokenFactoryEvent(msg.sender, address(newToken));
+        address tokenAddress = address(newToken);
+        emit NewMemeTokenFactoryEvent(msg.sender, tokenAddress);
+        return tokenAddress;
     }
 }
