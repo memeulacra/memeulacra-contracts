@@ -9,9 +9,12 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 contract MemeToken is ERC20Burnable, Ownable {
 
+    string public memeURL;
+
     constructor(
         string memory name,
         string memory symbol,
+        string memory urlToMeme,
         address ownerAddress,
         address[] memory contributors,
         uint256[] memory contributorProportions
@@ -32,6 +35,7 @@ contract MemeToken is ERC20Burnable, Ownable {
             _transfer(msg.sender, contributors[i], contributorProportion);
         }
         uint256 ownerBalance = balanceOf(msg.sender) - callerProportion;
+        memeURL = urlToMeme;
         _transfer(msg.sender, ownerAddress, ownerBalance);        
         _transferOwnership(ownerAddress);
     }
@@ -56,12 +60,13 @@ contract MemeulacraFactory is Initializable, OwnableUpgradeable, AccessControlUp
     function deployMemeToken(
         string memory name,
         string memory symbol,
+        string memory urlToMeme,
         address ownerAddress,
         address[] memory contributors,
         uint256[] memory contributorProportions
     ) external returns (address) {
         require(hasRole(MINTER_ROLE, msg.sender) || hasRole(UPGRADER_ROLE, msg.sender), "Caller is not a minter");
-        MemeToken newToken = new MemeToken(name, symbol, ownerAddress, contributors, contributorProportions);
+        MemeToken newToken = new MemeToken(name, symbol, urlToMeme, ownerAddress, contributors, contributorProportions);
         address tokenAddress = address(newToken);
         emit NewMemeTokenFactoryEvent(msg.sender, tokenAddress);
         return tokenAddress;
