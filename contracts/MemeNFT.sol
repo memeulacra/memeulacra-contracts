@@ -2,11 +2,12 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-contract MemeNFT is Initializable, ERC721BurnableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
+contract MemeNFT is Initializable, ERC721BurnableUpgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     uint256 public nextTokenId;
@@ -15,6 +16,7 @@ contract MemeNFT is Initializable, ERC721BurnableUpgradeable, OwnableUpgradeable
 
     function initialize(string memory name, string memory symbol) public initializer {
         __ERC721_init(name, symbol);
+        __ERC721Enumerable_init();
         __Ownable_init(msg.sender);
         __AccessControl_init();
 
@@ -47,7 +49,24 @@ contract MemeNFT is Initializable, ERC721BurnableUpgradeable, OwnableUpgradeable
     }
 
     // Override supportsInterface function
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, AccessControlUpgradeable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable, AccessControlUpgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
+    }
+
+    function _increaseBalance(address account, uint128 value) 
+        internal 
+        virtual 
+        override(ERC721Upgradeable, ERC721EnumerableUpgradeable) 
+    {
+        ERC721EnumerableUpgradeable._increaseBalance(account, value);
+    }
+
+    function _update(address to, uint256 tokenId, address auth) 
+        internal 
+        virtual 
+        override(ERC721Upgradeable, ERC721EnumerableUpgradeable) 
+        returns (address) 
+    {
+        return ERC721EnumerableUpgradeable._update(to, tokenId, auth);
     }
 }

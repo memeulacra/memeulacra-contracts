@@ -32,13 +32,24 @@ async function filterOwnedContracts(walletAddress, provider) {
 
 }
 
+const erc721abi = [
+    'function balanceOf(address owner) view returns (uint256)',
+    'function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)',
+    'function getImageURL(uint256 tokenId) external view returns (string memory)',
+    'function getImageHash(uint256 tokenId) external view returns (bytes32)',
+    'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
+];
+
+
+const erc20abi = [
+    'function name() view returns (string)',
+    'function symbol() view returns (string)',
+    'function balanceOf(address owner) view returns (uint256)',
+];
+
 async function getTokenDetails(accountAddress, tokenAddress, provider) {
-    const abi = [
-        'function name() view returns (string)',
-        'function symbol() view returns (string)',
-        'function balanceOf(address owner) view returns (uint256)',
-    ];
-    const tokenContract = new ethers.Contract(tokenAddress, abi, provider);
+
+    const tokenContract = new ethers.Contract(tokenAddress, erc20abi, provider);
     try {
       const name = await tokenContract.name();
       const symbol = await tokenContract.symbol();
@@ -49,6 +60,30 @@ async function getTokenDetails(accountAddress, tokenAddress, provider) {
       console.log(`Token Balance: ${ethers.formatUnits(balance, 18)}`);
     } catch (error) {
       console.error('Error fetching token details:', error);
+    }
+}
+
+
+async function getNFTs(accountAddress, nftContractAddress, provider) {
+    const nftContract = new ethers.Contract(nftContractAddress, erc721abi, provider);
+    try {
+        const balance = await nftContract.balanceOf(accountAddress); // Get the number of tokens owned
+        if (balance > 0) {
+            console.log(`${accountAddress} owns ${balance.toString()} NFTs.`);
+        } else {
+            console.log(`${accountAddress} does not own any NFTs.`);
+        }
+
+        // - requires 721 enumeration extension
+        for (let i = 0; i < balance; i++) {
+            const tokenId = await nftContract.tokenOfOwnerByIndex(accountAddress, i);
+            //tokenIds.push(tokenId.toString());
+            const tokenUrl = await nftContract.getImageURL(tokenId);
+            console.log(`Token owned by ${tokenId}: ${tokenUrl}`)
+        }
+
+    } catch (error) {
+        console.error('Error fetching token IDs:', error);
     }
 }
 
@@ -71,6 +106,9 @@ async function main() {
         p.push(getTokenDetails(queryAddress, element, baseSepoliaProvider));        
     });
     await Promise.all(p);
+
+    console.log("\nUser Owned Meme NTFs:");
+    await getNFTs(queryAddress, process.env.MNFT_PROXY_ADDRESS, baseSepoliaProvider);
     //console.log("Query:", query);
 }
 
