@@ -25,13 +25,13 @@ contract MemeToken is ERC20Burnable, Ownable {
         for (uint256 i = 0; i < contributorProportions.length; i++) {
             proportionSum += contributorProportions[i];
         }
-        require(proportionSum <= 100, "MemeToken: proportions must sum to 100");
+        require(proportionSum <= 10000, "MemeToken: proportions must sum to <=10000");
         _mint(msg.sender, supply);
         uint256 callerProportion = supply / 10;        
         uint256 ownerProportion = supply / 70;
         uint256 remainingSupply = supply - callerProportion - ownerProportion;
         for (uint256 i = 0; i < contributors.length; i++) {
-            uint256 contributorProportion = (remainingSupply * contributorProportions[i]) / 100;
+            uint256 contributorProportion = (remainingSupply * contributorProportions[i]) / 10000;
             _transfer(msg.sender, contributors[i], contributorProportion);
         }
         uint256 ownerBalance = balanceOf(msg.sender) - callerProportion;
